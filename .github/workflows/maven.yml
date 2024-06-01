@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: checkout
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Show current directory contents
         run: ls -l
       - name: Set up JDK 17
@@ -34,6 +36,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Build Development Docker image
         env:
           TAG: ${{ github.ref_name }}
@@ -48,6 +52,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Build Prod Docker image
         env:
           TAG: ${{ github.ref_name }}
@@ -62,6 +68,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: build_dev_image
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Push Development Docker image
         env:
           TAG: ${{ github.ref_name }}
@@ -77,6 +85,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: build_prod_image
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Push Prod Docker image
         env:
           TAG: ${{ github.ref_name }}
@@ -93,6 +103,8 @@ jobs:
     needs: push_prod_image
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_type == 'tag')
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Deployment step (manual)
         run: echo "Deploying to server..."
         # Add your deployment scripts/commands here
