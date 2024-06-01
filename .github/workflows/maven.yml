@@ -53,6 +53,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Build Prod Docker image
         run: docker build -t monapi:${{ github.ref_name }} .
+      - name: Log in to Docker Hub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Push Prod Docker image
         run: |
           docker tag monapi:${{ github.ref_name }} ycostarddev/monapi:${{ github.ref_name }}
