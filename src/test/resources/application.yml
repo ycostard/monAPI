@@ -1,0 +1,42 @@
+spring:
+    datasource:
+        url: jdbc:h2:mem:testH2;LOCK_TIMEOUT=10000;INIT=create domain if not exists jsonb as other;NON_KEYWORDS=KEY,VALUE
+        username: sa
+        password: password
+        driver-class-name: org.h2.Driver
+    jpa:
+        database-platform: org.hibernate.dialect.H2Dialect
+        hibernate:
+            ddl-auto: update
+    main:
+        allow-circular-references: true
+
+security:
+    jwt:
+        token:
+            secret-key: antituconstitutionnellement
+
+springdoc: 
+    api-docs: 
+        path: /doc
+
+management :
+    endpoint:
+        health:
+            cache:
+                time-to-live: 10s
+            show-details: always
+        info:
+            cache:
+                time-to-live: 10s
+    endpoints :
+        web: 
+            exposure:  
+                include: info,health
+            discovery:
+                enabled: true
+
+info: 
+    version: 0.0
+    app:
+        context: bibliothequespring
