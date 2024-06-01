@@ -30,7 +30,7 @@ jobs:
       - name: Build with Maven
         run: mvn clean install
 
-  build_dev_image:
+  build_push_dev_image:
     runs-on: ubuntu-latest
     needs: build
     if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
@@ -39,8 +39,12 @@ jobs:
         uses: actions/checkout@v4
       - name: Build Development Docker image
         run: docker build -t monapi:dev .
+      - name: Push Development Docker image
+        run: |
+          docker tag monapi:dev ycostarddev/monapi:dev
+          docker push ycostarddev/monapi:dev
 
-  build_prod_image:
+  build_push_prod_image:
     runs-on: ubuntu-latest
     needs: build
     if: startsWith(github.ref, 'refs/tags/v')
@@ -49,26 +53,6 @@ jobs:
         uses: actions/checkout@v4
       - name: Build Prod Docker image
         run: docker build -t monapi:${{ github.ref_name }} .
-
-  push_dev_image:
-    runs-on: ubuntu-latest
-    needs: build_dev_image
-    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Push Development Docker image
-        run: |
-          docker tag monapi:dev ycostarddev/monapi:dev
-          docker push ycostarddev/monapi:dev
-
-  push_prod_image:
-    runs-on: ubuntu-latest
-    needs: build_prod_image
-    if: startsWith(github.ref, 'refs/tags/v')
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
       - name: Push Prod Docker image
         run: |
           docker tag monapi:${{ github.ref_name }} ycostarddev/monapi:${{ github.ref_name }}
@@ -76,7 +60,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: push_prod_image
+    needs: build_push_prod_image
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_type == 'tag')
     steps:
       - name: Checkout code
