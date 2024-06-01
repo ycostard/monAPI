@@ -7,6 +7,11 @@ on:
     tags: 
       - 'v*.*.*'
   workflow_dispatch:
+    # Permet le déclenchement manuel
+    inputs:
+      deploy:
+        description: 'Deploy manually'
+        required: false
 
 jobs:
   checkout:
@@ -63,7 +68,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build_push_prod_image
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_type == 'tag')
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_type == 'tag' && github.event.inputs.deploy)
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
